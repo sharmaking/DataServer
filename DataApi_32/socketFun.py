@@ -176,6 +176,12 @@ def resolveRecvData(bufferData):
 	#解析指数数据
 	elif dataType == 5:
 		resolveIndexMarketData(bufferData)
+	#解析历史数据
+	elif dataType == 6:
+		print bufferData[8:]
+	#结束标记
+	elif dataType == 998:
+		pass
 #--------------------------------
 #接收解析socket数据，缓存拼接成完整数据
 #--------------------------------

@@ -39,13 +39,12 @@ def creatListener(bufferStack):
 	global g_listenerDict
 	for stock in g_subStocks:
 		if not g_listenerDict.has_key(stock):
-			bufferStack[stock]  = [] 
+			bufferStack[stock]    = [] 
 			newListener           = dataListener.CDataListerner(bufferStack[stock])
 			newListener.start()
 			g_listenerDict[stock] = newListener
 		pass
 	pass
-#启动监听对象
 
 #主入口
 def run():
@@ -57,5 +56,5 @@ def run():
 	creatListener(dataServerInstance.bufferStack)
 	
 	dataServerInstance.subscibeStock(g_subStocks)
-	dataServerInstance.requestData(0,0,datetime.datetime(2013,10,24,0,0,0),datetime.datetime(2013,10,25,0,0,0))
+	dataServerInstance.requestData(2,0,datetime.datetime(2012,10,24,0,0,0),datetime.datetime(2012,10,25,0,0,0))
 	

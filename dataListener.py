@@ -17,5 +17,5 @@ class CDataListerner(threading.Thread):
 		pass
 
 	def dataListening(self, dataType, data):
-		print data
+		#print data
 		pass
