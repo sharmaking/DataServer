@@ -19,14 +19,18 @@ g_socketLink = 0 	#设置socket接口
 #发送订阅请求
 #--------------------------------
 #向服务端发送订阅股票 step-1
-def subscibeStock(socketLink, stocks):
-	fmt = "iii%ds" %(6*len(stocks))
+def subscibeStock(socketLink, isAllMarket, stocks):
+	if isAllMarket:
+		isAllMarket = 1
+	else:
+		isAllMarket = 0
+	fmt = "iiii%ds" %(6*len(stocks))
 	sn = 0
-	length = 6*len(stocks) + 4
+	length = 6*len(stocks) + 8
 	stocksStr = ""
 	for stock in stocks:
 		stocksStr = stocksStr + stock
-	bytes = struct.pack(fmt, sn, length, len(stocks), stocksStr)
+	bytes = struct.pack(fmt, sn, length, isAllMarket, len(stocks), stocksStr)
 	#发送订阅代码
 	socketLink.send(bytes)
 	global g_socketLink
@@ -178,7 +182,8 @@ def resolveRecvData(bufferData):
 		resolveIndexMarketData(bufferData)
 	#解析历史数据
 	elif dataType == 6:
-		print bufferData[8:]
+		#print bufferData[8:]
+		pass
 	#结束标记
 	elif dataType == 998:
 		pass

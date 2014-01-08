@@ -14,8 +14,8 @@ class CDataApi(socket.socket):
 		self.connect(self.ADDR)
 		time.sleep(2)
 	#订阅股票
-	def subscibeStock(self, subStocks):
-		socketFun.subscibeStock(self, subStocks)
+	def subscibeStock(self, isAllMarket, subStocks):
+		socketFun.subscibeStock(self, isAllMarket, subStocks)
 	#请求数据
 	def requestData(self, requestType, flag, startTime, endTime):
 		if requestType == 0:		#请求当天数据
