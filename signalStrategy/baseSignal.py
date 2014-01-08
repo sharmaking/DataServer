@@ -12,13 +12,15 @@ class CBaseSingal(baseStrategy.CBaseStrategy):
 		pass
 	#行情数据触发函数
 	def onRtnMarketData(self, data):
-		print self.name, len(data)
+		print self.name, "onRtnMarketData", len(data)
 		pass
 	#逐笔成交触发函数
 	def onRtnTradeSettlement(self, data):
+		print self.name, "onRtnTradeSettlement", len(data)
 		pass
 	#买一队列触发函数
 	def onRtnOrderQueue(self, data):
+		print self.name, "onRtnOrderQueue", len(data)
 		pass
 	def dayBegin(self):
 		pass

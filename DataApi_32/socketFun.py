@@ -105,7 +105,8 @@ def resolveTradeSettlement(bufferData):
 	for pTransaction in pTransactions:
 		pTransaction["chSecurityCode"] = g_stocks[str(nIdnum)]["chSecurityCode"]
 		pTransaction["nDate"] = g_currentDate
-	g_socketLink.onRtnDepthMarketData(1, pTransactions)
+		pTransaction = dataStruct.formatTransaction(pTransaction, g_stocks[str(nIdnum)]["chSymbol"])
+		g_socketLink.onRtnDepthMarketData(1, pTransaction)
 #解析成交队列
 def resolveOrderQueue(bufferData):
 	p = bufferData[8:]
@@ -115,7 +116,8 @@ def resolveOrderQueue(bufferData):
 	for i in xrange(nItems):
 		pQueues[i]["chSecurityCode"] = g_stocks[str(pIdnums[i])]["chSecurityCode"]
 		pQueues[i]["nDate"] = g_currentDate
-	g_socketLink.onRtnDepthMarketData(2, pQueues)
+		pQueue = dataStruct.formatOrderQueue(pQueues[i], g_stocks[str(pIdnums[i])]["chSymbol"])
+		g_socketLink.onRtnDepthMarketData(2, pQueue)
 #解析股票行情数据
 def resolveMarketData(bufferData):
 	p = bufferData[8:]
@@ -127,7 +129,7 @@ def resolveMarketData(bufferData):
 		nSize = nSize + nLength
 		pMarketData["chSecurityCode"] = g_stocks[str(pIdnum)]["chSecurityCode"]
 		pMarketData["nDate"] = g_currentDate
-		pMarketData = dataStruct.formarStockMarketData(pMarketData, g_stocks[str(pIdnum)]["chSymbol"])
+		pMarketData = dataStruct.formatStockMarketData(pMarketData, g_stocks[str(pIdnum)]["chSymbol"])
 		g_socketLink.onRtnDepthMarketData(3, pMarketData)
 #解析期货行情数据
 def resolveFutureMarketData(bufferData):
@@ -140,7 +142,7 @@ def resolveFutureMarketData(bufferData):
 		nSize = nSize + nLength
 		pMarketData["chSecurityCode"] = g_stocks[str(pMarketData["nIndex"])]["chSecurityCode"]
 		pMarketData["nDate"] = g_currentDate
-		pMarketData = dataStruct.formarFutureMarketData(pMarketData, g_stocks[str(pMarketData["nIndex"])]["chSymbol"])
+		pMarketData = dataStruct.formatFutureMarketData(pMarketData, g_stocks[str(pMarketData["nIndex"])]["chSymbol"])
 		g_socketLink.onRtnDepthMarketData(4, pMarketData)
 #解析指数数据
 def resolveIndexMarketData(bufferData):
@@ -153,7 +155,7 @@ def resolveIndexMarketData(bufferData):
 		nSize = nSize + nLength
 		pMarketData["chSecurityCode"] = g_stocks[str(pMarketData["nIndex"])]["chSecurityCode"]
 		pMarketData["nDate"] = g_currentDate
-		pMarketData = dataStruct.formarIndexMarketData(pMarketData, g_stocks[str(pMarketData["nIndex"])]["chSymbol"])
+		pMarketData = dataStruct.formatIndexMarketData(pMarketData, g_stocks[str(pMarketData["nIndex"])]["chSymbol"])
 		g_socketLink.onRtnDepthMarketData(5, pMarketData)
 #解析接收的数据类型调用相应的方法
 def resolveRecvData(bufferData):
