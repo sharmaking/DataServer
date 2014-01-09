@@ -13,4 +13,7 @@ class CDataServerApi(CDataApi):
 	#数据接收接口
 	def onRtnDepthMarketData(self, dataType, data):
 		self.bufferStack[data["stockCode"][:6]].append((dataType,data))
+		if self.bufferStack.has_key("Multiple"):
+			if dataType == 3 or dataType == 4 or dataType == 5:
+				self.bufferStack["Multiple"].append((dataType,data))
 

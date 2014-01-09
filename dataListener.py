@@ -9,7 +9,7 @@ class CDataListerner(threading.Thread):
 		self.buffStack = buffStack
 		#策略对象
 		self.type = True     		#监听类型： True 单股票策略监听，False 多股票策略监听
-		self.signalObjDict = {}
+		self.signalObjDict = {}		#但股票策略对象列表
 		self.listenerDict = {}
 		self.multipleObjDict = {}
 	#----------------------------

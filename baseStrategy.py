@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import datetime
+import copy
 import os
 
 class CBaseStrategy(object):
@@ -12,7 +13,12 @@ class CBaseStrategy(object):
 		self.currentData = {}
 		#连接池，用于发送信号
 		self.requesHandlerObjList = []
-	
+		#数据缓存
+		#当前时间，最近的一个行情数据时间
+		self.currentMDDateTime = datetime.datetime(1990,1,1,0,0,0)
+		self.MDList = []			#行情数据
+		self.TDList = []			#逐笔成交数据
+		self.ODList = []			#成交队列数据
 	#------------------------------
 	#listener 调用接口
 	#------------------------------
@@ -29,13 +35,23 @@ class CBaseStrategy(object):
 	def dataListener(self, dataType, data):
 		if dataType == 1:			#逐笔成交数据
 			self.onRtnTradeSettlement(data)
-		elif dataType == 2:			#
+			self.saveTradeSettlement(data)
+		elif dataType == 2:			#报单队列
 			self.onRtnOrderQueue(data)
+			self.saveOrderQuene(data)
 		else:
-			self.onRtnMarketData(data)
-			#自动保存缓存触发
-			if (datetime.datetime.now() - self.preSaveCacheTime)> datetime.timedelta(minutes = 5):
-				self.autosaveCache()
+			if data["dateTime"] > self.currentMDDateTime:
+				self.onRtnMarketData(data)
+				self.currentMDDateTime = copy.copy(data["dateTime"])
+				self.saveMarketData(data)
+		#自动保存缓存触发
+		if (datetime.datetime.now() - self.preSaveCacheTime)> datetime.timedelta(minutes = 5):
+			self.autosaveCache()
+			self.saveCache(
+				MDList = self.MDList,
+				TDList = self.TDList,
+				ODList = self.ODList
+				)
 	#------------------------------
 
 	#------------------------------
@@ -45,15 +61,12 @@ class CBaseStrategy(object):
 		self.cacheFilePath = "cache/%s%s.cache" %(self.stockCode, self.name)
 		self.preSaveCacheTime = datetime.datetime.now()
 		self.loadCache()
-		pass
-    
 	#读取缓存
 	def loadCache(self):
 		if not os.path.isfile(self.cacheFilePath):
 			self.cacheFile = open(self.cacheFilePath, "w")
 			self.cacheFile.close
 		execfile(self.cacheFilePath)
-    
 	#保存缓存
 	def saveCache(self, **objDict):
 		self.cacheFile = open(self.cacheFilePath, "w")
@@ -63,15 +76,27 @@ class CBaseStrategy(object):
 		self.cacheFile.write(content)
 		self.cacheFile.close()
 		self.preSaveCacheTime = datetime.datetime.now()
-		pass
-
+	#------------------------------
+	#数据保存相关函数
+	#------------------------------
+	def saveMarketData(self, data):
+		self.MDList.append(copy.copy(data))
+		if len(self.MDList) > 300:
+			del self.MDList[-1]
+	def saveTradeSettlement(self, data):
+		self.TDList.append(copy.copy(data))
+		if len(self.TDList) > 300:
+			del self.TDList[-1]
+	def saveOrderQuene(self, data):
+		self.ODList.append(copy.copy(data))
+		if len(self.ODList) > 300:
+			del self.ODList[-1]
 	#------------------------------
 	#继承重载函数
 	#------------------------------
 	#自定义初始化函数
 	def customInit(self):
 		self.name = "baseStrategy"
-		pass
 	#行情数据触发函数
 	def onRtnMarketData(self, data):
 		pass
