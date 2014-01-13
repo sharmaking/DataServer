@@ -45,13 +45,9 @@ class CBaseStrategy(object):
 				self.currentMDDateTime = copy.copy(data["dateTime"])
 				self.saveMarketData(data)
 		#自动保存缓存触发
-		if (datetime.datetime.now() - self.preSaveCacheTime)> datetime.timedelta(minutes = 5):
+		if (datetime.datetime.now() - self.preSaveCacheTime)> datetime.timedelta(minutes = 1):
 			self.autosaveCache()
-			self.saveCache(
-				MDList = self.MDList,
-				TDList = self.TDList,
-				ODList = self.ODList
-				)
+			#self.saveCache(MDList = self.MDList, TDList = self.TDList, ODList = self.ODList)
 	#------------------------------
 
 	#------------------------------
@@ -82,15 +78,15 @@ class CBaseStrategy(object):
 	def saveMarketData(self, data):
 		self.MDList.append(copy.copy(data))
 		if len(self.MDList) > 300:
-			del self.MDList[-1]
+			del self.MDList[0]
 	def saveTradeSettlement(self, data):
 		self.TDList.append(copy.copy(data))
 		if len(self.TDList) > 300:
-			del self.TDList[-1]
+			del self.TDList[0]
 	def saveOrderQuene(self, data):
 		self.ODList.append(copy.copy(data))
 		if len(self.ODList) > 300:
-			del self.ODList[-1]
+			del self.ODList[0]
 	#------------------------------
 	#继承重载函数
 	#------------------------------
