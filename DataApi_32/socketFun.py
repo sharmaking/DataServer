@@ -7,7 +7,7 @@ import copy
 import decompress
 import dataStruct
 import time
-#socketLink 代表是socket连接类
+#g_socketLink, socketLink 代表是socket连接类
 #--------------------------------
 #定义共用成员变量
 #--------------------------------
@@ -32,7 +32,11 @@ def subscibeStock(socketLink, isAllMarket, stocks):
 		stocksStr = stocksStr + stock
 	bytes = struct.pack(fmt, sn, length, isAllMarket, len(stocks), stocksStr)
 	#发送订阅代码
-	socketLink.send(bytes)
+	try:
+		socketLink.send(bytes)
+		print "SubscibeStock Successful"
+	except Exception:
+		print "SubscibeStock Failure: send error"
 	global g_socketLink
 	g_socketLink = socketLink
 #向服务端发送订阅请求时间段
@@ -188,7 +192,7 @@ def resolveRecvData(bufferData):
 		pass
 	#结束标记
 	elif dataType == 998:
-		pass
+		g_socketLink.onRtnDataEnd()
 #--------------------------------
 #接收解析socket数据，缓存拼接成完整数据
 #--------------------------------
